@@ -24,4 +24,5 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd /var/www/html/tree-existence
-            git pull origin main
+            git fetch origin
+	    git reset --hard origin/main
