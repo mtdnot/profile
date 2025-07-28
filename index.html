@@ -264,9 +264,9 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 60px;
+            gap: 40px;
             width: 100%;
-            max-width: 800px;
+            max-width: 900px;
             margin-left: auto;
             margin-right: auto;
         }
@@ -518,9 +518,45 @@
             visibility: visible;
         }
 
+        /* Third Pocket Watch Component (Stopped at 12:00) */
+        .pocket-watch-3 {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .pocket-watch-3:hover {
+            transform: scale(1.05);
+        }
+
+        .pocket-watch-3 .watch-info {
+            position: absolute;
+            top: 130px;
+            left: 0;
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 10px 14px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+            min-width: 140px;
+        }
+
+        .pocket-watch-3:hover .watch-info {
+            opacity: 1;
+            visibility: visible;
+        }
+
         @media (max-width: 768px) {
             .watch-container {
-                gap: 40px;
+                gap: 20px;
                 padding: 15px;
             }
 
@@ -535,6 +571,18 @@
             }
 
             .pocket-watch-2 .watch-info {
+                font-size: 11px;
+                padding: 8px 10px;
+                min-width: 120px;
+                top: 100px;
+            }
+
+            .pocket-watch-3 {
+                width: 90px;
+                height: 90px;
+            }
+
+            .pocket-watch-3 .watch-info {
                 font-size: 11px;
                 padding: 8px 10px;
                 min-width: 120px;
@@ -630,6 +678,27 @@
                     <div id="currentTime">Loading...</div>
                     <div id="moonPhaseText">New Moon</div>
                     <div id="moonDate">Loading...</div>
+                </div>
+            </div>
+
+            <!-- Stopped Clock at 12:00 -->
+            <div class="pocket-watch-3" id="pocketWatch3">
+                <div class="watch-case">
+                    <div class="crown"></div>
+                    <div class="chain-attachment"></div>
+                    <div class="watch-face">
+                        <div class="clock-numbers" id="clockNumbers3"></div>
+                        <div class="clock-hands">
+                            <div class="hand hour-hand" id="hourHand3"></div>
+                            <div class="hand minute-hand" id="minuteHand3"></div>
+                            <div class="hand second-hand" id="secondHand3"></div>
+                            <div class="center-dot"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="watch-info" id="watchInfo3">
+                    <div id="currentTime3">12:00:00</div>
+                    <div>Stopped Time</div>
                 </div>
             </div>
 
@@ -2094,9 +2163,98 @@ ${now.toLocaleDateString('ja-JP', {
             }
         }
 
+        // Stopped Pocket Watch Class (Fixed at 12:00)
+        class StoppedPocketWatch {
+            constructor() {
+                this.watchElement = document.getElementById('pocketWatch3');
+                this.currentTime = document.getElementById('currentTime3');
+                
+                this.hourHand = document.getElementById('hourHand3');
+                this.minuteHand = document.getElementById('minuteHand3');
+                this.secondHand = document.getElementById('secondHand3');
+                
+                this.initializeClockNumbers();
+                this.setFixedTime();
+                
+                // Add click event to show more details
+                this.watchElement.addEventListener('click', () => {
+                    this.showWatchDetails();
+                });
+            }
+            
+            // Initialize clock face numbers (same as other watches)
+            initializeClockNumbers() {
+                const numbersContainer = document.getElementById('clockNumbers3');
+                const positions = [
+                    { index: 0, content: 'XII', type: 'roman' },  // 12
+                    { index: 1, content: '', type: 'marker' },    // 1
+                    { index: 2, content: '', type: 'marker' },    // 2
+                    { index: 3, content: '', type: 'marker' },    // 3
+                    { index: 4, content: '', type: 'marker' },    // 4
+                    { index: 5, content: '', type: 'marker' },    // 5
+                    { index: 6, content: 'VI', type: 'roman' },   // 6
+                    { index: 7, content: '', type: 'marker' },    // 7
+                    { index: 8, content: '', type: 'marker' },    // 8
+                    { index: 9, content: '', type: 'marker' },    // 9
+                    { index: 10, content: '', type: 'marker' },   // 10
+                    { index: 11, content: '', type: 'marker' }    // 11
+                ];
+                
+                positions.forEach((pos) => {
+                    const element = document.createElement('div');
+                    
+                    // Calculate position
+                    const angle = (pos.index * 30) - 90; // Start from 12 o'clock
+                    const radius = pos.type === 'roman' ? 42 : 45; // Roman numerals closer, markers further
+                    const x = Math.cos(angle * Math.PI / 180) * radius;
+                    const y = Math.sin(angle * Math.PI / 180) * radius;
+                    
+                    if (pos.type === 'roman') {
+                        element.className = 'clock-number roman-numeral';
+                        element.textContent = pos.content;
+                        element.style.left = `calc(50% + ${x}px - 9px)`;
+                        element.style.top = `calc(50% + ${y}px - 9px)`;
+                    } else {
+                        element.className = 'minute-marker';
+                        element.style.left = `calc(50% + ${x}px - 1px)`;
+                        element.style.top = `calc(50% + ${y}px - 4px)`;
+                        
+                        // Rotate marker to point toward center
+                        element.style.transform = `rotate(${angle + 90}deg)`;
+                    }
+                    
+                    numbersContainer.appendChild(element);
+                });
+            }
+            
+            // Set clock hands to 12:00 position (0 degrees = 12 o'clock)
+            setFixedTime() {
+                const fixedAngle = 0; // All hands point to 12 o'clock
+                
+                // Apply fixed rotations
+                this.hourHand.style.transform = `rotate(${fixedAngle}deg)`;
+                this.minuteHand.style.transform = `rotate(${fixedAngle}deg)`;
+                this.secondHand.style.transform = `rotate(${fixedAngle}deg)`;
+                
+                // Set digital time display to 12:00:00
+                this.currentTime.textContent = '12:00:00';
+            }
+            
+            // Show detailed watch information
+            showWatchDetails() {
+                const details = `12:00:00
+固定時刻
+止まった時計
+すべての針が12時を指している`;
+                
+                alert(details);
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             new FractalTree('treeCanvas');
             new PocketWatch();
+            new StoppedPocketWatch();
             new ReversePocketWatch();
         });
     </script>
