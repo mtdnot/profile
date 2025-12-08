@@ -13,10 +13,93 @@
     <link rel="icon" type="image/png" sizes="16x16" href="tree_exist.png">
     <link rel="apple-touch-icon" href="tree_exist.png">
     <style>
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #f7f9fb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .loading-watches {
+            margin: 0;
+        }
+
+        /* Hero Section - Full Screen Tree */
+        .hero-section {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            transition: filter 0.3s ease;
+        }
+
+        .hero-section.blur-light {
+            filter: blur(3px);
+        }
+
+        .hero-section.blur-medium {
+            filter: blur(8px);
+        }
+
+        .hero-section .fractal-tree {
+            width: 100%;
+            height: 100%;
+            max-width: none;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hero-section #treeCanvas {
+            border-radius: 0;
+            box-shadow: none;
+            background: #ffffff;
+            width: 100vw;
+            height: 100vh;
+            max-width: 100vw;
+            cursor: pointer;
+        }
+
+        /* Content Wrapper */
+        .content-wrapper {
+            position: relative;
+            z-index: 1;
+            margin-top: 100vh;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            min-height: 100vh;
+            padding-top: 60px;
+            padding-bottom: 60px;
+        }
+
+        @media (max-width: 768px) {
+            .content-wrapper {
+                padding-top: 40px;
+                padding-bottom: 40px;
+            }
+        }
+
         .logo-container {
             position: relative;
         }
-        
+
         .fractal-tree {
             width: 100%;
             max-width: 500px;
@@ -24,7 +107,7 @@
             display: flex;
             justify-content: center;
         }
-        
+
         #treeCanvas {
             border-radius: 8px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -34,7 +117,7 @@
             max-width: 100%;
             cursor: pointer;
         }
-        
+
         @media (max-width: 768px) {
             .fractal-tree {
                 max-width: 350px;
@@ -653,9 +736,9 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Watch Container -->
-        <div class="watch-container">
+    <!-- Loading Screen (0-3 seconds) -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="watch-container loading-watches">
             <!-- Pocket Watch Component -->
             <div class="pocket-watch" id="pocketWatch">
                 <div class="watch-case">
@@ -726,18 +809,21 @@
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- ROOT Section -->
-        <section class="section root-section">
-            <div class="logo-container">
-                <div class="fractal-tree">
-                    <canvas id="treeCanvas"></canvas>
-                </div>
+    <!-- Hero Section - Full Screen Fractal Tree -->
+    <section class="hero-section" id="heroSection">
+        <div class="logo-container">
+            <div class="fractal-tree">
+                <canvas id="treeCanvas"></canvas>
             </div>
-            <p class="statement">"存在木 : a structure and existence"</p>
-        </section>
+        </div>
+    </section>
 
-        <!-- IDENTITY Section -->
+    <!-- Content Wrapper -->
+    <div class="content-wrapper">
+        <div class="container">
+            <!-- IDENTITY Section -->
         <section class="section">
             <h2>IDENTITY</h2>
             <div class="content">
@@ -829,18 +915,64 @@
         <section class="section">
             <h2>LINKS</h2>
             <div class="content">
-                <div class="links">
-                    <a href="https://github.com/mtdnot" target="_blank" rel="noopener noreferrer">GitHub</a>
-                    <a href="https://x.com/mtdnot" target="_blank" rel="noopener noreferrer">X (Twitter)</a>
-                    <a href="https://www.facebook.com/profile.php?id=61559472083047" target="_blank" rel="noopener noreferrer">Facebook</a>
-                    <a href="/blog/" target="_blank" rel="noopener noreferrer">Blog (DokuWiki)</a>
-                    <a href="https://mtdnot.dev/web-sites/ncc/blog/" target="_blank" rel="noopener noreferrer">WordPress Blog</a>
-                    <a href="https://calendar.google.com/calendar/u/0?cid=ZTc2YmYxYzk1YWUzYjNiN2I1ZDM2ZGVkMTlhODIxODQ3NGM1YjJmNDE5YjI1YjZjMjhmNDMzOGNiZTk4NzgxOEBncm91cC5jYWxlbmRhci5nb29nbGUuY29t" target="_blank" rel="noopener noreferrer">イベントカレンダー</a>
-                    <a href="https://calendar.google.com/calendar/u/0?cid=bXRkbm90MTEyOUBnbWFpbC5jb20" target="_blank" rel="noopener noreferrer">予定表（空き状況）</a>
+                <!-- Apps -->
+                <div class="link-category">
+                    <h3>Apps</h3>
+                    <div class="links">
+                        <a href="https://mtdnot.dev/apps/chat/" target="_blank" rel="noopener noreferrer">AI chat with live2d →</a>
+                        <a href="https://mtdnot.dev/apps/chart8/" target="_blank" rel="noopener noreferrer">chart8（三重県内の医療と過疎） →</a>
+                        <a href="https://mtdnot.dev/apps/wordcounter/" target="_blank" rel="noopener noreferrer">wordcounter →</a>
+                    </div>
+                </div>
+
+                <!-- Articles / Presentations -->
+                <div class="link-category">
+                    <h3>Articles / Presentations</h3>
+                    <div class="links">
+                        <a href="https://mtdnot.dev/apps/intromyselfLTrevealjs/" target="_blank" rel="noopener noreferrer">Intro myself LT →</a>
+                        <a href="https://mtdnot.dev/apps/%E5%A4%A7LTrevealjs4up/#/" target="_blank" rel="noopener noreferrer">大LT →</a>
+                    </div>
+                </div>
+
+                <!-- Social -->
+                <div class="link-category">
+                    <h3>Social</h3>
+                    <div class="links">
+                        <a href="https://github.com/mtdnot" target="_blank" rel="noopener noreferrer">GitHub →</a>
+                        <a href="https://x.com/mtdnot" target="_blank" rel="noopener noreferrer">X (Twitter) →</a>
+                        <a href="https://www.facebook.com/profile.php?id=61559472083047" target="_blank" rel="noopener noreferrer">Facebook →</a>
+                    </div>
+                </div>
+
+                <!-- Blog -->
+                <div class="link-category">
+                    <h3>Blog</h3>
+                    <div class="links">
+                        <a href="/blog/" target="_blank" rel="noopener noreferrer">DokuWiki →</a>
+                        <a href="https://mtdnot.dev/web-sites/ncc/blog/" target="_blank" rel="noopener noreferrer">WordPress →</a>
+                    </div>
+                </div>
+
+                <!-- Schedule -->
+                <div class="link-category">
+                    <h3>Schedule</h3>
+                    <div class="links">
+                        <a href="https://calendar.google.com/calendar/u/0?cid=ZTc2YmYxYzk1YWUzYjNiN2I1ZDM2ZGVkMTlhODIxODQ3NGM1YjJmNDE5YjI1YjZjMjhmNDMzOGNiZTk4NzgxOEBncm91cC5jYWxlbmRhci5nb29nbGUuY29t" target="_blank" rel="noopener noreferrer">イベントカレンダー →</a>
+                        <a href="https://calendar.google.com/calendar/u/0?cid=bXRkbm90MTEyOUBnbWFpbC5jb20" target="_blank" rel="noopener noreferrer">予定表（空き状況） →</a>
+                    </div>
+                </div>
+
+                <!-- Archive -->
+                <div class="link-category">
+                    <h3>Archive</h3>
+                    <div class="links">
+                        <a href="https://mtdnot.dev/apps/ncc/" target="_blank" rel="noopener noreferrer">NCC →</a>
+                    </div>
                 </div>
             </div>
         </section>
-    </div>
+        </div><!-- /container -->
+    </div><!-- /content-wrapper -->
 
     <script>
         class FractalTree {
@@ -870,12 +1002,24 @@
                 // Animated level cycling for fullscreen mode
                 this.levelCycleStart = Date.now(); // Start time for level cycling
                 this.currentFullscreenLevel = 1; // Current level in fullscreen mode
-                
+
+                // Hero section depth (controlled by scroll)
+                this.heroDepth = 1; // Depth for hero section (1-3)
+
                 // Mouse control for branch behavior
                 this.mouseX = 0; // Current mouse X position for rotation
                 this.mouseY = 0; // Current mouse Y position for branch angle
+
+                // Target values (where we want to go)
+                this.targetBranchAngleOffset = 0; // Target angle offset
+                this.targetBranchAngle = Math.PI/2; // Target branch angle
+
+                // Current values (smoothly interpolated)
                 this.branchAngleOffset = 0; // Angle offset based on mouse X position (0-360 degrees)
                 this.branchAngle = Math.PI/2; // Branch angle based on mouse Y position (0-180 degrees)
+
+                // Smoothing factor (0-1, higher = more responsive but less smooth)
+                this.smoothingFactor = 0.15; // Adjust for smoothness vs responsiveness
                 
                 // Branch URLs - customize these as needed
                 this.branchUrls = {
@@ -898,44 +1042,47 @@
             }
             
             setupCanvas() {
-                if (this.isFullscreen) {
-                    // Fullscreen mode - use full viewport
+                // Check if canvas is in hero section (full screen mode)
+                const isInHeroSection = this.canvas.closest('.hero-section') !== null;
+
+                if (this.isFullscreen || isInHeroSection) {
+                    // Fullscreen or Hero mode - use full viewport
                     const maxWidth = window.innerWidth;
                     const maxHeight = window.innerHeight;
-                    
+
                     this.canvas.width = maxWidth;
                     this.canvas.height = maxHeight;
                     this.canvas.style.width = maxWidth + 'px';
                     this.canvas.style.height = maxHeight + 'px';
-                    
+
                     this.trunkHeight = maxHeight * 0.3;
                     this.trunkWidth = Math.max(maxWidth * 0.003, 8);
                     this.baseX = maxWidth / 2;
                     this.baseY = maxHeight - 50;
                 } else {
-                    // Normal mode
+                    // Normal mode (small card)
                     const container = this.canvas.parentElement;
                     const containerRect = container.getBoundingClientRect();
                     const isMobile = window.innerWidth <= 768;
-                    
+
                     // Use container width with some padding
                     const maxWidth = Math.min(containerRect.width - 20, isMobile ? 350 : 500);
                     const maxHeight = Math.min(window.innerHeight * 0.4, isMobile ? 250 : 400);
-                    
+
                     const aspectRatio = 4/3;
                     let width = maxWidth;
                     let height = width / aspectRatio;
-                    
+
                     if (height > maxHeight) {
                         height = maxHeight;
                         width = height * aspectRatio;
                     }
-                    
+
                     this.canvas.width = width;
                     this.canvas.height = height;
                     this.canvas.style.width = width + 'px';
                     this.canvas.style.height = height + 'px';
-                    
+
                     this.trunkHeight = height * 0.45;
                     this.trunkWidth = Math.max(width * 0.005, isMobile ? 3 : 6);
                     this.baseX = width / 2;
@@ -954,20 +1101,22 @@
                     let clickedBranch = false;
                     for (const area of this.clickableAreas) {
                         if (this.isPointInBranch(x, y, area)) {
-                            // Branch click - handle URL navigation
-                            const url = this.branchUrls[area.branchId];
-                            if (url) {
-                                if (url.startsWith('http')) {
-                                    window.open(url, '_blank');
-                                } else {
-                                    window.location.href = url;
+                            // Branch click - only navigate URL in fullscreen mode
+                            if (this.isFullscreen) {
+                                const url = this.branchUrls[area.branchId];
+                                if (url) {
+                                    if (url.startsWith('http')) {
+                                        window.open(url, '_blank');
+                                    } else {
+                                        window.location.href = url;
+                                    }
                                 }
                             }
                             clickedBranch = true;
                             break;
                         }
                     }
-                    
+
                     // If not clicking on branch and not in fullscreen, enter fullscreen
                     if (!clickedBranch && !this.isFullscreen) {
                         this.enterFullscreen();
@@ -1419,61 +1568,66 @@
             }
             
             setupMouseControl() {
-                // Function to handle position input (mouse or touch)
-                const handlePositionInput = (x, y) => {
-                    // Update mouse positions
-                    this.mouseX = x;
-                    this.mouseY = y;
-                    
+                // Function to handle position input (viewport coordinates)
+                const handlePositionInput = (viewportX, viewportY) => {
+                    // Update mouse positions (viewport-relative)
+                    this.mouseX = viewportX;
+                    this.mouseY = viewportY;
+
                     // Convert X position to rotation angle (0-360 degrees)
                     // Left side = 0°, right side = 360°
-                    const normalizedX = x / this.canvas.width; // 0 to 1
-                    this.branchAngleOffset = normalizedX * 2 * Math.PI; // 0 to 2π radians
-                    
+                    const normalizedX = viewportX / window.innerWidth; // 0 to 1
+                    this.targetBranchAngleOffset = normalizedX * 2 * Math.PI; // 0 to 2π radians
+
                     // Convert Y position to branch angle (0-180 degrees)
                     // Top = 180°, bottom = 0° (reversed)
-                    const normalizedY = y / this.canvas.height; // 0 to 1
-                    this.branchAngle = (1 - normalizedY) * Math.PI; // π to 0 radians (180-0 degrees)
-                    
-                    // Check for branch hover for cursor
-                    let overBranch = false;
-                    for (const area of this.clickableAreas) {
-                        if (this.isPointInBranch(x, y, area)) {
-                            overBranch = true;
-                            break;
-                        }
-                    }
-                    
-                    this.canvas.style.cursor = overBranch ? 'pointer' : (this.isFullscreen ? 'default' : 'pointer');
+                    const normalizedY = viewportY / window.innerHeight; // 0 to 1
+                    this.targetBranchAngle = (1 - normalizedY) * Math.PI; // π to 0 radians (180-0 degrees)
                 };
-                
-                // Mouse events for desktop
+
+                // Function to check cursor and branch hover (canvas-relative)
+                const updateCursor = (canvasX, canvasY) => {
+                    // Only show pointer cursor on branches in fullscreen mode
+                    if (this.isFullscreen) {
+                        let overBranch = false;
+                        for (const area of this.clickableAreas) {
+                            if (this.isPointInBranch(canvasX, canvasY, area)) {
+                                overBranch = true;
+                                break;
+                            }
+                        }
+                        this.canvas.style.cursor = overBranch ? 'pointer' : 'default';
+                    } else {
+                        // Normal mode: pointer cursor to indicate clickable for fullscreen
+                        this.canvas.style.cursor = 'pointer';
+                    }
+                };
+
+                // Mouse events for desktop - window-wide
+                document.addEventListener('mousemove', (event) => {
+                    // Use viewport coordinates for tree control
+                    handlePositionInput(event.clientX, event.clientY);
+                });
+
+                // Canvas-specific mousemove for cursor updates
                 this.canvas.addEventListener('mousemove', (event) => {
                     const rect = this.canvas.getBoundingClientRect();
                     const x = event.clientX - rect.left;
                     const y = event.clientY - rect.top;
-                    handlePositionInput(x, y);
+                    updateCursor(x, y);
                 });
-                
-                // Touch events for mobile
-                this.canvas.addEventListener('touchmove', (event) => {
-                    event.preventDefault(); // Prevent scrolling
-                    const rect = this.canvas.getBoundingClientRect();
+
+                // Touch events for mobile - window-wide
+                document.addEventListener('touchmove', (event) => {
                     const touch = event.touches[0];
-                    const x = touch.clientX - rect.left;
-                    const y = touch.clientY - rect.top;
-                    handlePositionInput(x, y);
-                });
-                
-                // Touch start event to enable immediate response
-                this.canvas.addEventListener('touchstart', (event) => {
-                    event.preventDefault();
-                    const rect = this.canvas.getBoundingClientRect();
+                    handlePositionInput(touch.clientX, touch.clientY);
+                }, { passive: true });
+
+                // Touch start event
+                document.addEventListener('touchstart', (event) => {
                     const touch = event.touches[0];
-                    const x = touch.clientX - rect.left;
-                    const y = touch.clientY - rect.top;
-                    handlePositionInput(x, y);
-                });
+                    handlePositionInput(touch.clientX, touch.clientY);
+                }, { passive: true });
 
                 // Touch end event for branch link navigation
                 this.canvas.addEventListener('touchend', (event) => {
@@ -1482,20 +1636,22 @@
                     const touch = event.changedTouches[0];
                     const x = touch.clientX - rect.left;
                     const y = touch.clientY - rect.top;
-                    
-                    // Check if tap is on any branch
-                    for (const area of this.clickableAreas) {
-                        if (this.isPointInBranch(x, y, area)) {
-                            // Branch tap - handle URL navigation
-                            const url = this.branchUrls[area.branchId];
-                            if (url) {
-                                if (url.startsWith('http')) {
-                                    window.open(url, '_blank');
-                                } else {
-                                    window.location.href = url;
+
+                    // Check if tap is on any branch (only navigate in fullscreen mode)
+                    if (this.isFullscreen) {
+                        for (const area of this.clickableAreas) {
+                            if (this.isPointInBranch(x, y, area)) {
+                                // Branch tap - handle URL navigation
+                                const url = this.branchUrls[area.branchId];
+                                if (url) {
+                                    if (url.startsWith('http')) {
+                                        window.open(url, '_blank');
+                                    } else {
+                                        window.location.href = url;
+                                    }
                                 }
+                                break;
                             }
-                            break;
                         }
                     }
                 });
@@ -1720,12 +1876,17 @@
 
             draw() {
                 const time = Date.now() - this.startTime;
-                
+
+                // Smooth interpolation (lerp) for branch angles
+                // This makes touch/mouse movements smooth instead of jerky
+                this.branchAngleOffset += (this.targetBranchAngleOffset - this.branchAngleOffset) * this.smoothingFactor;
+                this.branchAngle += (this.targetBranchAngle - this.branchAngle) * this.smoothingFactor;
+
                 // Update 3D rotation (only in 3D mode)
                 if (this.is3D) {
                     this.rotationY += this.rotationSpeed;
                 }
-                
+
                 // Update level cycling for fullscreen mode
                 if (this.isFullscreen) {
                     const cycleTime = Date.now() - this.levelCycleStart;
@@ -1738,9 +1899,12 @@
                 this.branchPositions.clear();
                 this.clickableAreas = []; // Reset clickable areas
                 this.branchTips = []; // Reset branch tips for letter drawing
-                
+
                 // Draw fractal tree starting from base position
-                const maxDepthLimit = this.isFullscreen ? this.currentFullscreenLevel : 1;
+                // Check if canvas is in hero section
+                const isInHeroSection = this.canvas.closest('.hero-section') !== null;
+                const maxDepthLimit = this.isFullscreen ? this.currentFullscreenLevel :
+                                     (isInHeroSection ? this.heroDepth : 1);
                 
                 if (this.is3D) {
                     // 3D mode: use 3D fractal function
@@ -2259,11 +2423,68 @@ ${now.toLocaleDateString('ja-JP', {
             }
         }
 
+        // Global fractal tree instance
+        let fractalTree;
+
         document.addEventListener('DOMContentLoaded', () => {
-            new FractalTree('treeCanvas');
+            // Initialize components
+            fractalTree = new FractalTree('treeCanvas');
             new PocketWatch();
             new StoppedPocketWatch();
             new ReversePocketWatch();
+        });
+
+        // Loading screen - hide when all content is loaded
+        window.addEventListener('load', () => {
+            const loadingScreen = document.getElementById('loadingScreen');
+            loadingScreen.classList.add('hidden');
+
+            // Scroll effect - blur hero section when scrolling
+            const heroSection = document.getElementById('heroSection');
+            let ticking = false;
+
+            window.addEventListener('scroll', () => {
+                if (!ticking) {
+                    window.requestAnimationFrame(() => {
+                        const scrollY = window.scrollY;
+                        const viewportHeight = window.innerHeight;
+
+                        // Calculate fractal depth based on scroll (1-3)
+                        if (fractalTree) {
+                            let newDepth;
+                            // 3x faster transitions (first third of viewport)
+                            if (scrollY <= viewportHeight * 0.11) {
+                                // 0-11vh: depth 1
+                                newDepth = 1;
+                            } else if (scrollY <= viewportHeight * 0.22) {
+                                // 11-22vh: depth 2
+                                newDepth = 2;
+                            } else {
+                                // 22-100vh: depth 3
+                                newDepth = 3;
+                            }
+                            fractalTree.heroDepth = newDepth;
+                        }
+
+                        // Add blur effect based on scroll position (matches depth transitions)
+                        heroSection.classList.remove('blur-light', 'blur-medium');
+
+                        if (scrollY <= viewportHeight * 0.11) {
+                            // 0-11vh: No blur (depth 1)
+                            // No classes needed
+                        } else if (scrollY <= viewportHeight * 0.22) {
+                            // 11-22vh: Light blur (depth 2)
+                            heroSection.classList.add('blur-light');
+                        } else {
+                            // 22-100vh: Medium blur (depth 3)
+                            heroSection.classList.add('blur-medium');
+                        }
+
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            });
         });
     </script>
 </body>
